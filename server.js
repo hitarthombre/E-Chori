@@ -44,7 +44,26 @@ app.get("/:name", (req, res) => {
   res.sendFile(filePath);
 });
 
+// 📂 API endpoint to list available files
+app.get("/api/files", (req, res) => {
+  const filesList = Object.entries(routes).map(([route, file]) => {
+    const filePath = path.join(__dirname, file);
+    return {
+      route,
+      file,
+      exists: fs.existsSync(filePath),
+      path: `/` + route,
+    };
+  });
+
+  res.json({
+    count: filesList.length,
+    files: filesList,
+  });
+});
+
 // 🚀 Start server
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`✅ Server running at http://localhost:${PORT}`);
+  console.log(`📁 Files API available at http://localhost:${PORT}/api/files`);
 });
